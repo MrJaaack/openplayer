@@ -23,10 +23,14 @@
         $(function() {
             var offset = $("#opContainerPlaylists").offset();
             var topPadding = 50;
+            
             $(window).scroll(function() {
                 if ($(window).scrollTop() > offset.top) {
-                    $("#opContainerPlaylists").stop().animate({marginTop: $(window).scrollTop() - offset.top + topPadding});}
-                else {$("#opContainerPlaylists").stop().animate({marginTop: 0});};});
+                    $("#opContainerPlaylists").stop().animate({marginTop: $(window).scrollTop() - offset.top + topPadding});
+                } else {
+                    $("#opContainerPlaylists").stop().animate({marginTop: 0});
+                }
+            });
         });
     </script>
 <?php endif ?>
