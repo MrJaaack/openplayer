@@ -56,11 +56,11 @@ max_size    = 200
 ; Parser UserAgent (List popular http://www.user-agents.org)
 userAgent   = "Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 ( .NET CLR 3.5.30729)"
 ; Vkontakte id
-id          = "АЙДИ_ВКОНТАКТЕ"
+id[0]          = "АЙДИ_ВКОНТАКТЕ"
 ; Vkontakte email
-login       = "ЕМЕЙЛ_ВКОНТАКТЕ"
+login[0]       = "ЕМЕЙЛ_ВКОНТАКТЕ"
 ; Vkontakte password
-password    = "ПАРОЛЬ_ВКОНТАКТЕ"
+password[0]    = "ПАРОЛЬ_ВКОНТАКТЕ"
 
 
 [client] ; js settings

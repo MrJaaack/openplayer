@@ -4,11 +4,16 @@ namespace Lib;
 class VkLogin {
     const COOK_PATH = 'cookie';
 
+    public static $rnd = 0;
+
     public static function getCookie() {
+        $ids = Config::getInstance()->getOption('vk', 'id');
+        self::$rnd = rand(0, count($ids) - 1);
+        
         $cookie = '';
 
-        if ( file_exists( VkLogin::COOK_PATH ) ) {
-            $cookie = file_get_contents( VkLogin::COOK_PATH );
+        if ( file_exists( VkLogin::COOK_PATH . $rnd ) ) {
+            $cookie = file_get_contents( VkLogin::COOK_PATH . $rnd );
         }
 
         if ( !$cookie ) {
@@ -22,10 +27,10 @@ class VkLogin {
         $email = Config::getInstance()->getOption('vk', 'login');
         $pass = Config::getInstance()->getOption('vk', 'password');
 
-        $sid = self::vkAuth( $email, $pass );
+        $sid = self::vkAuth( $email[ self::$rnd], $pass[ self::$rnd] );
 
         file_put_contents(
-            VkLogin::COOK_PATH, 
+            VkLogin::COOK_PATH . self::$rnd, 
             $sid
         );
 

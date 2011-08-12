@@ -18,7 +18,10 @@ class Songs extends \Lib\Base\App {
         { // токен сдох
           // фигово тем, что если нифига не найдено будет выполнен перелогин, 
           // но к сожалению это единственный безболезненый способ узнать жив ли еще токен.
-            unlink( \Lib\VkLogin::COOK_PATH );
+            $ids = Config::getInstance()->getOption('vk', 'id');
+            foreach ($ids as $key => $value) {
+                unlink( \Lib\VkLogin::COOK_PATH . $key );
+            }
 
             $url = Request::getAllGet();
             $url['tokenreset'] = true;

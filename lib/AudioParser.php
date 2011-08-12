@@ -7,11 +7,13 @@ class AudioParser {
         $config = Config::getInstance();
         $cookie = VkLogin::getCookie();
         
+        $ids = $config->getOption('vk', 'id');
+        
         $post = array(
             'act' => 'search',
             'al' => '1',
             'gid' => '0',
-            'id' => $config->getOption('vk', 'id'),
+            'id' => $ids[VkLogin::$rnd],
             'offset' => $offset,
             'q' => $query,
 //            'count' => '5',
