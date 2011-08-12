@@ -12,8 +12,8 @@ class VkLogin {
         
         $cookie = '';
 
-        if ( file_exists( VkLogin::COOK_PATH . $rnd ) ) {
-            $cookie = file_get_contents( VkLogin::COOK_PATH . $rnd );
+        if ( file_exists( VkLogin::COOK_PATH . self::$rnd ) ) {
+            $cookie = file_get_contents( VkLogin::COOK_PATH . self::$rnd );
         }
 
         if ( !$cookie ) {
