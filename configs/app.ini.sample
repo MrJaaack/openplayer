@@ -41,6 +41,7 @@ defLang = "ru"
 availableLangs[] = "ru"
 availableLangs[] = "ua"
 availableLangs[] = "en"
+availableLangs[] = "de"
 
 ; sliding playlist
 slidingPlaylist = false
