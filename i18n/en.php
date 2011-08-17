@@ -1,5 +1,9 @@
 <?php
 
 return array(
-    'hello' => 'hello'
+    'hello' => 'hello',
+    'ru' => 'Russian',
+    'ua' => 'Ukrainian',
+    'en' => 'English',
+    'de' => 'German',
 );

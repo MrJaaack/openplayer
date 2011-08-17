@@ -67,6 +67,7 @@ return array(
     'ru' => 'Russisch',
     'ua' => 'Ukrainisch',
     'en' => 'Englisch',
+    'de' => 'Deutsch',
     'Auth form' => 'Authorisierungsform',
 );
 
