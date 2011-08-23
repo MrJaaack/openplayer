@@ -27,7 +27,7 @@ class VkLogin {
         $email = Config::getInstance()->getOption('vk', 'login');
         $pass = Config::getInstance()->getOption('vk', 'password');
 
-        $sid = self::vkAuth( $email[ self::$rnd], $pass[ self::$rnd] );
+        $sid = self::vkAuth( $email[ self::$rnd ], $pass[ self::$rnd ] );
 
         file_put_contents(
             VkLogin::COOK_PATH . self::$rnd, 

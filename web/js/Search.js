@@ -57,58 +57,15 @@ var Search = {
     },
     
     loadSongs: function(data, cb) {
-        Loading.on();
-        
-        var query = data;
-        
-        location.hash = "!?"+query;
-        
-        $.ajax({
-            url: './',
-            data: query+'&app=ajax&query=search',
-            type: 'post',
-//            dataType:   'json',
+        Base.loadBase(data, '&app=ajax&query=search', function() {
+            Search.pagerEvents();
+            Search.artistClick();
 
-            success: function(html) {
-                $('#opSongsPlace').html(html);
-                
-                Search.pagerEvents();
-                Search.artistClick();
-                
-                Playlists.init();
-                
-                if (typeof(cb) != 'undefined') {
-                	cb();
-                }
-                
-                Loading.off();
-                /*
-                
-            	if (!(/offset=[0-9]+/.test(query))) {
-            		$('#opSongsPlace').html('');
-            		$('#opSongsPlace').append(data.recomendation);
-            	}
-            	if ($("#opContainerSongs").size()) {
-            		$('#opContainerSongs').append(data.songs);	
-            	} else {
-            		$('#opSongsPlace').append(data.songs);
-            	}
-            	if($("#opNextBtnContainer").size() == 0) {
-            		$("#opSongsPlace").append("<div id='opNextBtnContainer'></div>");
-            	}
-            	$("#opNextBtnContainer").html(data.next);
-                Search.pagerEvents();
-                Playlists.init();
-                
-                Search.artistClick();
-                
-                Loading.off();
-                if (typeof(cb) != 'undefined') {
-                	cb();
-                }
-                */
+            Playlists.init();
+
+            if (typeof(cb) != 'undefined') {
+                cb();
             }
-
         });
     }
     

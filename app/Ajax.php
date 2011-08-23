@@ -127,6 +127,10 @@ class Ajax extends \Lib\Base\App {
                 echo $this->render('user');
                 die;
                 break;
+            case 'getapp':
+                echo $this->render(\Lib\Request::get('getapp', 'about'));
+                die;
+                break;
             
             case 'deleteSong':
             	if (\Lib\Config::getInstance()->getOption('client', 'deleteSong')) {
@@ -206,16 +210,19 @@ class Ajax extends \Lib\Base\App {
                 }
 				# /stat
 				
-				if (Request::get('query') == 'dl') {
+                # download song
+				if ( 'dl' == Request::get('query') ) {
 					$fname = Helper::makeValidFname(
 						Request::get('artist') . ' - ' . Request::get('name')
 					).'.mp3';
 					$path = './web/assets/'.$path;
+                    
 					Response::sendfile(array(
 						'filepath' => $path,
 						'filename' => $fname,
 					));
 				}
+                # /download song
 				
                 echo json_encode(array(
                     'url' => "./web/assets/{$path}",

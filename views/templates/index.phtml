@@ -4,7 +4,7 @@
     
 </div>
 
-<img src="./web/img/logo.png" style="display: inline-block"/>
+<img src="./web/img/logo.png" style="display: inline-block; cursor: pointer;" onclick="Base.loadApp('about')"/>
 
 <a href="http://twitter.com/openwebplayer" title="<?php echo __('Project news') ?>" target="_new" rel="nofollow" class="op-twitter-btn">
     <img src="./web/img/twitter.png" style="display: inline-block"/>
@@ -40,9 +40,9 @@
         <?php echo $this->render('search') ?>
     </div>
     <div id="opSongsPlace">
-        <?php if (\Lib\Request::get('l')): ?>
+        <?php if ( \Lib\Request::get('l') ): ?>
             <?php echo $this->render('songs') ?>
-        <?php elseif (\Lib\Request::get('q')): ?>
+        <?php elseif ( \Lib\Request::get('q') ): ?>
             <?php echo $this->render('songs') ?>
         <?php else: ?>
             <?php echo $this->render('history') ?>
