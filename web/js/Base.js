@@ -15,7 +15,7 @@ var Base = {
             success: function(html) {
                 $('#opSongsPlace').html(html);
                 
-                if (typeof(cb) != 'undefined') {
+                if (typeof(callback) != 'undefined') {
                     callback();
                 }
                 
