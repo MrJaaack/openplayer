@@ -154,5 +154,33 @@ class User extends \Lib\Base\Manager {
         
 		$res = $this->updateSettings( $settings );
     }
+	
+	public function confirm ( $login, $password ) { // API confirm method
+		if ( !$login ) return false;
+	
+		$login = strip_tags($login);
+		$loginQ = $this->pdo->quote($login);
+		
+		if ($password) {
+			$password = strip_tags($password);
+			$passwordMd5 = $this->pdo->quote($password);
+		}
+		
+		$q = "SELECT login, password FROM user WHERE login = {$loginQ}";
+		
+		if ( $password ) {
+			$q .= " AND password = {$passwordMd5} ";
+		} else {
+			$q .= " AND password IS NULL";
+		}
+		
+		$res = $this->pdo->query($q);
+		$user = $res->fetchObject();
+		if(is_object($user) && $user->login == $login && $user->password == $password) {
+			return true;
+		} else {
+			return false;
+		}
+	}
         
 }
