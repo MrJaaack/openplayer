@@ -174,12 +174,76 @@ class AudioParser {
 			$song['duration'] = $result[4];
 			$song['artist'] = $result[5];
 			$song['name'] = $result[6];
-			$song['translate'] = '0';
 			
 			return $song; // Возвращает массив с одной песней. Данная песня - 100% именно та, на которую дают ссылку
 		} else {
 			return array();
 		}
+    }
+	
+	/* Принимает парамерт id пользователя Вконтакте вида 41613828 и отдает все его песни */
+	/* Можно генерировать плейлисты */
+	public static function vkUserSongs($Userid) {
+        $config = Config::getInstance();
+        $cookie = VkLogin::getCookie();
+		
+		$result = '';
+
+        $ids = $config->getOption('vk', 'id');
+
+        $post = array(
+            'act' => 'load_audios_silent',
+            'al' => '1',
+            'edit' => '0',
+			'gid' => '0',
+            'id' => $Userid
+        );
+
+        $answer = Curl::process(
+            'http://vkontakte.ru/audio',
+            $cookie,
+            false,
+            http_build_query($post)
+        );
+		
+		/* Структурируем песни */
+		$pos = strpos($answer, '{');
+		$answer = substr($answer, $pos+8);
+		$tmp = explode('<!>', $answer);
+		$answer = substr($tmp[0], 0, strlen($tmp[0])-2);
+		$answer = str_replace('"', '&quote;', $answer);
+		$answer = str_replace('\',\'', '","', $answer);
+		$answer = str_replace('[\'', '["', $answer);
+		$answer = str_replace('\']', '"]', $answer);
+		$answer = '{"all":['.self::win2utf($answer).']}';
+		$answer = json_decode($answer, TRUE);
+		
+		$songs = Array();
+		
+		/* Структурируем плейлисты */
+		$playlists = $tmp[1];
+		$pos = strpos($playlists, '"albums"');
+		$playlists = substr($playlists, $pos+8);
+		$pos = strpos($playlists, ',"hashes"');
+		$playlists = substr($playlists, 0, $pos);
+		$playlists = '{"playlists"'.self::win2utf($playlists).'}';
+		$playlists = json_decode($playlists, TRUE);
+		
+		foreach($answer['all'] as $element) {
+			$song['url'] = $element[2];
+			$song['duration'] = $element[4];
+			$song['artist'] = htmlspecialchars($element[5]);
+			$song['name'] = htmlspecialchars($element[6]);
+			$song['id'] = md5($song['name'].$song['duration']);
+			
+			$playlists['playlists'][$element[8]][$song['id']] = $song;
+		}
+		
+		return $playlists['playlists']; // Возвращает массив песен пользователя вконтакте
+		
+		/* Формат ответа: */
+		/* Array( "playlist-id" => Array( "playlist-id", "playlist-title", Array("playlist-songs") ) ); */
+		/* В нулевом массиве содержатся песни без плейлистов */
     }
 	
 	function win2utf($str)	{ // Переводит win-1251 в utf8, так как Контакт на запрос act=load_audios_silent отвечает в этой древней кодировке
