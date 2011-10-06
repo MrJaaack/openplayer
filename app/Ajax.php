@@ -157,77 +157,65 @@ class Ajax extends \Lib\Base\App {
                 # /stat
 				
                 $id = Request::get('id');
-                
-                $storage = \Lib\Storage::getInstance();
-               	$path = $storage->makeName("{$id}.mp3"); 
-                
-               	$result = true;
-               	
-                if ( !$storage->exists( $path ) ) {
-                    $url = Request::get('url');
-                    
-                    $headers = get_headers($url);
-                    $status = substr($headers[0], 9, 3);
-                    
-                    if ('404' == $status) {
-                        $song = reset(\Lib\AudioParser::search (
-                            Request::get('artist') . ' - ' . Request::get('name')
-                        ));
+                $url = Request::get('url');
 
-                        $url = $song['url'];
-                        $playlistsManager = new Playlist;
-                        $playlistsManager->updateSongInfo(
-                            $id, 
-                            array(
-                                'url' => $url
-                            )
-                        );
-                    }
-                    
-                    $song = file_get_contents($url);
-                    $result = $storage->save($song, $path);
-                    
-                    if ( $result && \Lib\Config::getInstance()->getOption('app', 'logSongs') ) {
-                        $songsManager = new \Manager\Songs;
-                        
-                    	$songsManager->updateSong(
-                            $id, 
-                            array(
-                                'filename' => $path, 
-                                'size' => strlen($song)
-                            )
-                        );
-                    }
+                $headers = get_headers($url);
+                $status = substr($headers[0], 9, 3);
+
+                if ('404' == $status) {
+                    $song = reset(\Lib\AudioParser::search (
+                        Request::get('artist') . ' - ' . Request::get('name')
+                    ));
+
+                    $url = $song['url'];
+                    $playlistsManager = new Playlist;
+                    $playlistsManager->updateSongInfo(
+                        $id, 
+                        array(
+                            'url' => $url
+                        )
+                    );
                 }
+                
+                # Suggest stat
+                if ( \Lib\Config::getInstance()->getOption('app', 'logSongs') ) {
+                    $songsManager = new \Manager\Songs;
+
+                    $songsManager->updateSong(
+                        $id, 
+                        array(
+                            'filename' => $path, 
+                            'size' => strlen($song)
+                        )
+                    );
 				
-                # stat
-                if ( \Lib\Config::getInstance()->getOption( 'app', 'logSongs' ) ) {
-					if ( !isset($statManager) ) {
-						$statManager = new \Manager\Stat; 
-					}
-                    
+                    $statManager = new \Manager\Stat; 
 					$statManager->logSong($id);
                 }
-				# /stat
+                # /Suggest stat
 				
                 # download song
 				if ( 'dl' == Request::get('query') ) {
-					$fname = Helper::makeValidFname(
+                    $fname = Helper::makeValidFname(
 						Request::get('artist') . ' - ' . Request::get('name')
 					).'.mp3';
-					$path = './web/assets/'.$path;
                     
-					Response::sendfile(array(
-						'filepath' => $path,
-						'filename' => $fname,
-					));
+                    header("Content-Disposition: attachment; filename=\"{$fname}\"");
+                    header('Content-Description: File Transfer');
+                    header('Content-Transfer-Encoding: binary');
 				}
                 # /download song
-				
-                echo json_encode(array(
-                    'url' => "./web/assets/{$path}",
-                	'status' => $result
-                ));
+                
+                $song = file_get_contents($url);
+                $contentLength = strlen($song);
+                
+                header('Last-Modified:');
+                header('ETag:');
+                header('Content-Type: audio/mpeg');
+                header('Accept-Ranges: bytes');
+                header('Content-Length: '.$contentLength);
+                
+                echo $song;
                 die;
                 break;
 

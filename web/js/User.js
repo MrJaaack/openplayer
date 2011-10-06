@@ -29,6 +29,7 @@ var User = {
                     Playlists.reload();
                 }
             });
+            
             return false;
         });
         
@@ -52,6 +53,7 @@ var User = {
                     Playlists.reload();
                 }
             });
+            
             return false;
         });
     }

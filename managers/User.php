@@ -28,16 +28,14 @@ class User extends \Lib\Base\Manager {
         $serializedSettings = json_encode($settings);
 		
 		$res = $this->pdo->prepare("UPDATE user SET settings = ? WHERE id = ?");
-		$res->execute(array($serializedSettings, $userId));
         
-        return $res;
+        return $res->execute(array($serializedSettings, $userId));
     }
 
 
     public function updatePLSettings ( $plId, $status ) {
         $user = User::getUser();
 		$plId = intval($plId);
-		$status = 1*$status;
 
 		$settings = $user->settings;
 		$settings['pl'][$plId] = $status;

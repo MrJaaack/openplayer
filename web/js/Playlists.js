@@ -19,7 +19,7 @@ var Playlists = {
     player_init: false,
     
     init: function() {
-    	if (!this.player_init) {
+    	if ( !this.player_init ) {
     		this.player_init = true;
 	        $("#jquery_jplayer_1").jPlayer({
 	        	swfPath: "./web/lib",
@@ -41,6 +41,7 @@ var Playlists = {
 		        },
                 
 		        play: function() {
+                    Loading.off();
 		        	$(".jp-pause").show();
 		        	$(".jp-play").hide();
 		        },
@@ -306,7 +307,10 @@ var Playlists = {
     
     repeat: false,
     
-    getFirstSong: function() {
+    getFirstSong: function(isNextSearchPage) {
+        if ( isNextSearchPage ) {
+            return $("#opContainerSongs").children('.op-song').get(0);
+        }
 //        $(this.prevSong.parents(".op-container-songbox").children().get(0));
     	//используем родителей предыдущей песни для того чтобы повторять
     	//тот плейлист который проигрывался, а не прыгать из плейлиста в поиск
@@ -337,7 +341,7 @@ var Playlists = {
     			} else if ( Playlists.prevSong.parents("#opContainerSongs").size() ) {
                     Search.loadNext( function() {
                         self.playSong(
-                            self.getFirstSong()
+                            self.getFirstSong(true)
                         );
                     });
 
@@ -374,63 +378,25 @@ var Playlists = {
     prevSong: null,
     
     playSong: function( par ) {
-        var self = this;
         Loading.on();
         
-        if ( Settings.deleteSong && null != self.prevSong ) {
-            // detele prev song from server
-            $.ajax({
-                url: './',
-                data: {
-                    app:    'ajax',
-                    query:  'deleteSong',
-                    id:     self.prevSong.data('id')
-                },
-                type: 'post',
-                dataType: 'json'
-            });
-        }
-        self.prevSong = $(par);
+        $('.op-nowplaying').removeClass('op-nowplaying');
+        $('.op-song[data-id='+$(par).data('id')+']').addClass('op-nowplaying');
         
-        $.ajax({
-            url: './',
-            data: {
-                app:    'ajax',
-                query:  'getSong',
-                url:    $(par).data('url'),
-                artist: $(par).data('artist'),
-                name:   $(par).data('name'),
-                id:     $(par).data('id')
-            },
-            type:       'post',
-            dataType:   'json',
+        this.prevSong = $(par);
+        
+        $("#jquery_jplayer_1").jPlayer("setMedia", {
+            "mp3": "./?app=ajax&query=getSong&url="+$(par).data('url')+
+                "&artist="+$(par).data('artist')+
+                "&name="+$(par).data('name')+
+                "&id="+$(par).data('id')
+        }).jPlayer("play");
 
-            success: function(data) {
-            	if ( !data.status ) {
-            		Playlists.next();
-            		//may be show some msg?
-//            		$(par).remove();
-            	} else if (data.url) {
-                    $('.op-nowplaying').removeClass('op-nowplaying');
-                    $('.op-song[data-id='+$(par).data('id')+']').addClass('op-nowplaying');
-                    
-                    $("#jquery_jplayer_1").jPlayer(
-                        "setMedia", {
-                            "mp3": data.url
-                        }).jPlayer("play");
+        var title = this.prevSong.data('artist') + ' - ' + this.prevSong.data('name');
 
-                    var title = self.prevSong.data('artist') + ' - ' + self.prevSong.data('name');
+        this.prevSong.addClass("played");
 
-                    self.prevSong.addClass("played");
-
-                    $("#song-title").html(title);
-                    $("title").html(title);
-                } else {
-                    alert( Lang.__('Something went wrong:(') );
-                }
-                
-                Loading.off();
-            }
-        });
+        $("#song-title").html(title);
+        $("title").html(title);
     }
 }
