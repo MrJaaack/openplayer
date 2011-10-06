@@ -30,9 +30,24 @@ class Songs extends \Lib\Base\App {
             header("Location: ?{$location}");
         }
         
-        $this->songs = array_slice(// @todo
-            $this->songs, 0, $count
-        );
+        $cut = true;
+        
+        if ( 1 == $count ) {
+            foreach ($this->songs as $value) {
+                if ( Request::get('q') == trim($value['artist']."-".$value['name']) ) {
+                    $this->songs = array($value);
+                    $cut = false;
+                    break;
+                }
+            }
+
+        } 
+        
+        if ( $cut ) {
+            $this->songs = array_slice(// @todo
+                $this->songs, 0, $count
+            );
+        }
     }
 
 }
