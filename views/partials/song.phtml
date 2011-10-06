@@ -3,7 +3,9 @@
      data-plid="<?php echo $plId ?>" 
      data-url="<?php echo $song['url'] ?>" 
      data-name="<?php echo $song['name'] ?>" 
+     data-uname="<?php echo urlencode($song['name']) ?>" 
      data-artist="<?php echo $song['artist'] ?>" 
+     data-uartist="<?php echo urlencode($song['artist']) ?>" 
      data-duration="<?php echo $song['duration'] ?>"
      data-position="<?php echo isset($position) ? $position : null ?>">
 

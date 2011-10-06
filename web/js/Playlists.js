@@ -385,11 +385,14 @@ var Playlists = {
         
         this.prevSong = $(par);
         
+        var url = "./?app=ajax&query=getSong"
+            +"&artist="+$(par).data('uartist')
+            +"&name="+$(par).data('uname')
+            +"&url="+$(par).data('url')
+            +"&id="+$(par).data('id');
+        
         $("#jquery_jplayer_1").jPlayer("setMedia", {
-            "mp3": "./?app=ajax&query=getSong&url="+$(par).data('url')+
-                "&artist="+$(par).data('artist')+
-                "&name="+$(par).data('name')+
-                "&id="+$(par).data('id')
+            "mp3": url
         }).jPlayer("play");
 
         var title = this.prevSong.data('artist') + ' - ' + this.prevSong.data('name');

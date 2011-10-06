@@ -146,12 +146,15 @@ class Ajax extends \Lib\Base\App {
 			
             case 'dl':
             case 'getSong':
+                $artist = Request::get('artist');
+                $name = Request::get('name');
+                
                 # stat
-                if ( Request::get('artist') ) {
+                if ( $artist ) {
                     $statManager = new \Manager\Stat;
                     
                     $statManager->log(
-                        Request::get('artist')
+                        $artist
                     );
                 }
                 # /stat
@@ -161,13 +164,20 @@ class Ajax extends \Lib\Base\App {
 
                 $headers = get_headers($url);
                 $status = substr($headers[0], 9, 3);
-
-                if ('404' == $status) {
-                    $song = reset(\Lib\AudioParser::search (
-                        Request::get('artist') . ' - ' . Request::get('name')
-                    ));
-
-                    $url = $song['url'];
+                if ( '404' == $status ) {
+                    $searchSongs = \Lib\AudioParser::search ($artist . ' - ' . $name);
+                    foreach ($searchSongs as $value) {
+                        if ( $artist == $value['artist'] && $name == $value['name'] ) {
+                            $url = $value['url'];
+                            break;
+                        }
+                    }
+                    
+                    if ( !$url ) {
+                        $song = reset($searchSongs);
+                        $url = $song['url'];
+                    }
+                    
                     $playlistsManager = new Playlist;
                     $playlistsManager->updateSongInfo(
                         $id, 
@@ -197,7 +207,7 @@ class Ajax extends \Lib\Base\App {
                 # download song
 				if ( 'dl' == Request::get('query') ) {
                     $fname = Helper::makeValidFname(
-						Request::get('artist') . ' - ' . Request::get('name')
+						$artist . ' - ' . $name
 					).'.mp3';
                     
                     header("Content-Disposition: attachment; filename=\"{$fname}\"");
