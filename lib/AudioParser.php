@@ -36,7 +36,7 @@ class AudioParser {
         $songsManager = new \Manager\Songs;
         foreach ($matches as $audioItem) {
             preg_match_all(
-                '/<div class="duration fl_r">(.*)<\/div>/', 
+                '/<div class="duration fl_r".+?>(.*)<\/div>/', 
                 $audioItem, 
                 $res
             );
