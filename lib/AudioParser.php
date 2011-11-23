@@ -3,124 +3,130 @@ namespace Lib;
 
 class AudioParser {
 
+    public static $html = null;
+
     public static function search($query, $offset = 0) {
         $config = Config::getInstance();
-        $cookie = VkLogin::getCookie();
+        $cacheEnabled = $config->getOption('cache', 'cacheSearch', false);
+        $cachePath = CACHEROOT . "/" . sha1($query . $offset);
         
-        $ids = $config->getOption('vk', 'id');
+        $cached = false;
+        if ( $cacheEnabled && file_exists($cachePath) ) {
+            $cached = true;
+            $data = unserialize(file_get_contents($cachePath));
+            $songs = $data['data'];
+        }
         
-        $post = array(
-            'act' => 'search',
-            'al' => '1',
-            'gid' => '0',
-            'id' => $ids[VkLogin::$rnd],
-            'offset' => $offset,
-            'q' => $query,
-//            'count' => '5',
-            'sort' => '2'
-        );
+        if ( !$cached || ( $data['meta']['time'] < (time() - $config->getOption('cache', 'cacheSearchTime', 86400)) ) ) {
+            $cookie = VkLogin::getCookie();
 
-        $answer = Curl::process( 
-            'http://vkontakte.ru/audio',
-            $cookie,
-            false,
-            http_build_query($post)
-        );
-        
-        $matches = explode(
-            '<div class="fl_l" style="width:31px;height:21px;">', 
-            $answer
-        );
+            $ids = $config->getOption('vk', 'id');
 
-        $songs = array();
-        $songsManager = new \Manager\Songs;
-        foreach ($matches as $audioItem) {
-            preg_match_all(
-                '/<div class="duration fl_r">(.*)<\/div>/', 
-                $audioItem, 
-                $res
+            $post = array(
+                'act' => 'search',
+                'al' => '1',
+                'gid' => '0',
+                'id' => $ids[VkLogin::$rnd],
+                'offset' => $offset,
+                'q' => $query,
+    //            'count' => '5',
+                'sort' => '2'
             );
 
-            if ( ! isset( $res[1][0] ) ) continue;
-
-            $song['duration'] = $res[1][0];
-
-            preg_match_all(
-                '<input type="hidden" id=".*?" value="(.*)?" />', 
-                $audioItem, 
-                $res
-            );
-
-            $songName = explode( ',', $res[1][0] );
-
-            $song['url'] = $songName[0];
-
-            preg_match_all(
-                '/<div class="title_wrap">(.*)?<\/div>/', 
-                $audioItem, 
-                $res
-            );
-
-            $songname = preg_replace(
-                '/\(.*\)/', 
-                '', 
-                strip_tags($res[1][0])
-            );
-
-            $songname = mb_convert_encoding(
-                $songname, 
-                $config->getOption('app', 'charset'), 
-                'Windows-1251'
+            $answer = Curl::process( 
+                'http://vkontakte.ru/audio',
+                $cookie,
+                false,
+                http_build_query($post)
             );
             
-			$s = mb_convert_encoding(
-				$res[1][0], 
-				Config::getInstance()->getOption('app', 'charset'), 
-				'Windows-1251'
-			);
-			
-            if (preg_match('#<b>(.+?)</b>#', $s, $artist)) {
-            	$song['artist'] = strip_tags(trim($artist[1]));
-            }
-            if (preg_match('#<span class="title">(.+?)<span class="user">#', $s, $name)) {
-            	$song['name'] = strip_tags(trim($name[1]));
-            }
-			
-			preg_match_all( // Ищет id вида 41613828_110901414
-                '/<div class="repeat_wrap">(.*)?<\/div>/',
-                $audioItem,
-                $res2
+            self::$html = $answer;
+
+            $matches = explode(
+                '<div class="fl_l" style="width:31px;height:21px;">', 
+                $answer
             );
-			
-			if (preg_match('#id="repeat(.+?)"#', $res2[1][0], $play_id)) { // Записывает id вида 41613828_110901414
-				$song['vkid'] = $play_id[1];
-            }
-
-			if ( $config->getOption('app', 'fair_id') == 'yes' ) {
-				$headers = \Lib\Curl::get_headers($song['url'], true);
-                
-				if (!isset($headers['Content-Length'])) {
-					//this could be caused by expired token...invoke re-search or skip track?
-					continue;
-				}
-                
-				$song['id'] = md5($songname.$headers['Content-Length']);
-			} else {
-				$song['id'] = md5($songname.$song['duration']);
-			}
-
-            $songs[$song['id']] = $song;
             
-            if ( $config->getOption( 'app', 'logSongs' ) ) {
-                $songsManager->addSong( 
-                    $song['id'], 
-                    '', 
-                    $song['name'], 
-                    $song['artist']
+            $songs = array();
+            foreach ($matches as $audioItem) {
+                preg_match_all(
+                    '/<div class="duration fl_r".+?>(.*)<\/div>/', 
+                    $audioItem, 
+                    $res
                 );
+
+                if ( ! isset( $res[1][0] ) ) continue;
+
+                $song['duration'] = $res[1][0];
+                
+                preg_match_all(
+                    '<input type="hidden" id=".*?" value="(.*)?" />', 
+                    $audioItem, 
+                    $res
+                );
+
+                $songName = explode( ',', $res[1][0] );
+
+                $song['url'] = $songName[0];
+
+                preg_match_all(
+                    '/<div class="title_wrap">(.*)?<\/div>/', 
+                    $audioItem, 
+                    $res
+                );
+
+                $songname = preg_replace(
+                    '/\(.*\)/', 
+                    '', 
+                    strip_tags($res[1][0])
+                );
+
+                $songname = mb_convert_encoding(
+                    $songname, 
+                    $config->getOption('app', 'charset'), 
+                    'Windows-1251'
+                );
+
+                $s = mb_convert_encoding(
+                    $res[1][0], 
+                    Config::getInstance()->getOption('app', 'charset'), 
+                    'Windows-1251'
+                );
+
+                if (preg_match('#<b>(.+?)</b>#', $s, $artist)) {
+                    $song['artist'] = strip_tags(trim($artist[1]));
+                }
+                if (preg_match('#<span class="title">(.+?)<span class="user">#', $s, $name)) {
+                    $song['name'] = strip_tags(trim($name[1]));
+                }
+
+                preg_match_all( // Ищет id вида 41613828_110901414
+                    '/<div class="repeat_wrap">(.*)?<\/div>/',
+                    $audioItem,
+                    $res2
+                );
+
+                if (preg_match('#id="repeat(.+?)"#', $res2[1][0], $play_id)) { // Записывает id вида 41613828_110901414
+                    $song['vkid'] = $play_id[1];
+                }
+
+                $song['id'] = md5($songname.$song['duration']);
+
+                $songs[$song['id']] = $song;
+            }
+            
+            if ( $cacheEnabled ) {
+                $data = array(
+                    'meta' => array(
+                        'time' => time()
+                    ),
+                    'data' => $songs
+                );
+
+                file_put_contents( $cachePath, serialize($data) );
             }
         }
-
+        
         return $songs;
     }
 	
