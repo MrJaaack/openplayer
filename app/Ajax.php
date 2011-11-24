@@ -164,8 +164,12 @@ class Ajax extends \Lib\Base\App {
 
                 $headers = get_headers($url);
                 $status = substr($headers[0], 9, 3);
+                $oldUrl = $url;
                 if ( '404' == $status ) {
-                    $searchSongs = \Lib\AudioParser::search ($artist . ' - ' . $name);
+                    $q = $artist . ' - ' . $name;
+                    
+                    $searchSongs = \Lib\AudioParser::search($q);
+                    
                     foreach ($searchSongs as $value) {
                         if ( $artist == $value['artist'] && $name == $value['name'] ) {
                             $url = $value['url'];
@@ -173,7 +177,7 @@ class Ajax extends \Lib\Base\App {
                         }
                     }
                     
-                    if ( !$url ) {
+                    if ( !$url || $url = $oldUrl ) {
                         $song = reset($searchSongs);
                         $url = $song['url'];
                     }
