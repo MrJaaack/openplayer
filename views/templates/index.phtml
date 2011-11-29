@@ -4,7 +4,7 @@
     
 </div>
 
-<img src="./web/img/logo.png" style="display: inline-block; cursor: pointer;" onclick="Base.loadApp('about')"/>
+<img src="./web/img/logo.png" style="display: inline-block;"/>
 
 <a href="http://twitter.com/openwebplayer" title="<?php echo __('Project news') ?>" target="_new" rel="nofollow" class="op-twitter-btn">
     <img src="./web/img/twitter.png" style="display: inline-block"/>
@@ -18,7 +18,7 @@
     <?php echo $this->render('user') ?>
 </div>
 
-<?php if ( \Lib\Config::getInstance()->getOption('app', 'slidingPlaylist') ): ?>
+<?php if ( op_conf('widgets', 'slidingPlaylist') ): ?>
     <script type="text/javascript">
         $(function() {
             var offset = $("#opContainerPlaylists").offset();
@@ -45,13 +45,24 @@
         <?php elseif ( \Lib\Request::get('q') ): ?>
             <?php echo $this->render('songs') ?>
         <?php else: ?>
-            <?php echo $this->render('history') ?>
-            <?php echo $this->render('about') ?>
+        
+            <?php if ( op_conf('widgets', 'lastSearches') ):?>
+                <?php echo $this->render('history') ?>
+            <?php endif ?>
+        
+            <?php if ( op_conf('widgets', 'showCatalog') ):?>
+                <?php echo $this->render('catalog') ?>
+            <?php endif ?>
+        
         <?php endif ?>
     </div>
-    
-    <script type="text/javascript" src="./web/js/Search.js"></script>
+    <br/>
 </div>
+    
+<div style="clear: both"></div>
+<?php echo $this->render('about') ?>
+
+<script type="text/javascript" src="./web/js/Search.js"></script>
 
 <div id="opContainerPlaylists">
     <?php echo $this->render('playlists') ?>
