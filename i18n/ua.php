@@ -1,7 +1,7 @@
 <?php
 return array(
     'Nothing found' => 'Нічого не знайдено',
-    'Last searches' => 'Останні пошуки',
+    'Last searches' => 'Історія',
     'loading' => 'завантаження',
     'Project news' => 'Новини проекту',
     'Shuffle [OFF]' => 'Випадковий [ВИМК]',
@@ -11,8 +11,8 @@ return array(
     'Search' => 'Пошук',
     'Previous' => 'Попередні',
     'Next' => 'Наступні',
-    'Logged in as' => 'Тебе авторизовано як',
-    'Authorise' => 'Авторизуватися',
+    'Logged in as' => 'Привіт',
+    'Authorise' => 'Увійти',
     'Repeat [PLAYLIST]' => 'Повтор [ПЛЕЙЛИСТ]',
     'Repeat [SONG]' => 'Повтор [ПІСНЯ]',
     'Repeat [OFF]' => 'Повтор [ВИМК]',
@@ -63,9 +63,9 @@ return array(
     'Tweet' => 'Твітнути',
     'Share on vkontakte' => 'Показати друзям вконтакті',
     'Share on facebook' => 'Показати друзям в фейсбуці',
-    'ru' => 'Російська',
+    'ru' => 'Русский',
     'ua' => 'Українська',
-    'en' => 'Англійська',
-    'de' => 'Німецька',
+    'en' => 'English',
+    'de' => 'Deutsche',
     'Auth form' => 'Форма авторизації',
 );

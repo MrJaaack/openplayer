@@ -1,12 +1,12 @@
 var Loading = {
     on: function() {
         this.changeFavicon('./web/img/loading.gif');
-        $('#opLoading').show('slow');
+        if ($('#opLoading')) $('#opLoading').show('slow');
     },
     
     off: function() {
         this.changeFavicon('./web/img/icon.png');
-        $('#opLoading').hide('slow');
+        if ($('#opLoading')) $('#opLoading').hide('slow');
     },
     
     changeFavicon: function(href) {

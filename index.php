@@ -1,6 +1,9 @@
 <?php
 session_start();
 define('ROOT', __DIR__);
+define('CACHEROOT', ROOT . "/assets");
+
+ini_set('display_errors', 'off');
 
 # autoload
 function classLoad( $className ) {
@@ -42,6 +45,8 @@ function __ ( $word ) {
 
 # app init
 $app = strtolower( Lib\Request::get('app', 'index') );
+
+require_once ROOT . '/lib/helpers.php';
 
 $appClass = "App\\".ucfirst($app);
 $appObj = new $appClass;

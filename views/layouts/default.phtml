@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title><?php echo \Lib\Config::getInstance()->getOption('app', 'title') ?></title>
+        <title>
+            <?php echo ( $this->title ) ? : op_conf('app', 'title') ?>
+        </title>
         
-        <base href="<?php echo \Lib\Config::getInstance()->getOption('app', 'baseUrl') ?>"/>
+        <base href="<?php echo op_conf('app', 'baseUrl') ?>"/>
         
-        <meta charset="<?php echo \Lib\Config::getInstance()->getOption('app', 'charset') ?>"/>
+        <meta charset="<?php echo op_conf('app', 'charset') ?>"/>
         
         <script type="text/javascript" src="./web/js/jquery.js"></script>
         <script type="text/javascript" src="./web/js/jquery-ui.js"></script>
@@ -38,15 +40,28 @@
                 
                 translate: <?php echo json_encode(Lib\Lang::$translate)?>
             }
-                    
+            
+            var baseUrl = '<?php echo op_conf('app', 'baseUrl') ?>';
         </script>
+        
+        <?php 
+        if ( $sape = op_conf('app', 'sape') ) {
+             if ( !defined('_SAPE_USER') ) {
+                define('_SAPE_USER', $sape); 
+             }
+             
+             require_once($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'); 
+             
+             $sape = new SAPE_client();
+        }
+        ?>
         
         <?php echo $this->content ?>
         
-        <?php if (\Lib\Config::getInstance()->getOption('app', 'GoogleAnalytics')): ?>
+        <?php if ( op_conf('app', 'GoogleAnalytics') ): ?>
             <script type="text/javascript">
                   var _gaq = _gaq || [];
-                  _gaq.push(['_setAccount', '<?php echo \Lib\Config::getInstance()->getOption('app', 'GoogleAnalytics') ?>']);
+                  _gaq.push(['_setAccount', '<?php echo op_conf('app', 'GoogleAnalytics') ?>']);
                   _gaq.push(['_trackPageview']);
 
                   (function() {
@@ -58,5 +73,6 @@
             </script>
         <?php endif ?>
         
+        <!-- Open Player v0.23 --> 
     </body>
 </html>

@@ -2,8 +2,10 @@
 
 return array(
     'hello' => 'hello',
-    'ru' => 'Russian',
-    'ua' => 'Ukrainian',
+    'ru' => 'Русский',
+    'ua' => 'Українська',
     'en' => 'English',
-    'de' => 'German',
+    'de' => 'Deutsche',
+    'Logged in as' => 'Hello',
+    'Authorise' => 'Sign in',
 );

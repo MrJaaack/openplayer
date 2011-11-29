@@ -2,11 +2,17 @@ body {
     position: relative;
     background-image: url(../img/bg3.png);
     background-repeat: repeat-x;
+    
+    margin: 0;
 }
 
 body a {
     text-decoration: none;
     color: #444;
+}
+
+#opContainerUser {
+    margin-left: 6px;
 }
 
 body a:hover {
@@ -21,6 +27,20 @@ body a:hover {
 
 .op-playlist {
     width: 100%;
+}
+
+.op-block-about {
+    background-color: #222;
+    color: #f0fefe;
+    display: block;
+    margin-top: 10px;
+    padding: 6px;
+    box-shadow: 0 0 9px #AAAAAA;
+    font-size: 10px;
+}
+
+.op-block-about a{
+    color: #f0fefe;
 }
 
 .op-container-playlists .op-container-songbox {
@@ -48,7 +68,7 @@ body a:hover {
 }
 
 .op-form-search form {
-    margin: 15px;
+    margin: 12px;
     height: 31px;
 }
 
@@ -70,7 +90,7 @@ body a:hover {
     border: 1px solid #ccc;
     cursor: pointer;
     
-    width: 79px;
+    width: 15%;
     height: 31px;
     background-color: #eee;
 }
@@ -79,13 +99,15 @@ body a:hover {
 }
 
 .op-container-main {
-    width: 56%;
+    width: 58%;
+    margin-left: 6px;
 }
 
 #opContainerPlaylists {
     right: 0;
     top: 50px;
     position: absolute;
+    margin-right: 5px;
 }
 
 .op-placeholder-little {
@@ -111,7 +133,7 @@ body a:hover {
     background-image: url(../img/bg.png) !important;
 }
 
-.op-nowplaying a{
+.op-nowplaying a {
     color: #ddd;
 }
 
@@ -131,12 +153,20 @@ body a:hover {
     display: inline-block;
     width: 100%;
     
+    padding: 1px;
 }
 
 .op-playlist-header-in {
     text-align: center;
     padding: 2px;
 }
+
+.op-history {
+    background-color: #bfc5ff;
+    padding: 2px;
+}
+
+
 
 
 
@@ -148,10 +178,19 @@ body a:hover {
     display: inline-block;
     width: 100%;
     cursor: move;
+    
+    margin-top: 1px;
+    font-size: 10px;
+    
+    padding: 2px 0px;
 }
 
 .op-subsong {
     padding: 3px;
+}
+
+#opContainerSongs {
+    margin-bottom: 10px;
 }
 
 

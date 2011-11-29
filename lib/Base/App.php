@@ -4,8 +4,13 @@ namespace Lib\Base;
 class App {
     public $content = null;
     
+    public $title = null;
     public $layout = "default";
 
+    public function setLayout( $layout = "default" ) {
+        $this->layout = $layout;
+    }
+    
     public function run( $app ) {
         $user = new \Manager\User;
         $user->autologin();
@@ -13,7 +18,11 @@ class App {
         $this->init();
         $this->content = $this->render($app, true);
         
-        require ROOT . "/views/layouts/{$this->layout}.phtml";
+        if ( null != $this->layout ) {
+            require ROOT . "/views/layouts/{$this->layout}.phtml";
+        } else {
+            echo $this->content;
+        }
     }
     
     public function render($app, $current = false) {

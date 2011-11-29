@@ -12,28 +12,21 @@ password    = "PASS"
 ; database charset
 charset     = "utf8"
 
-
 [app]
-; Page title
-title		= "Open Player"
+; Base title
+title               = "Open Player"
 ; Page charset
-charset		= "UTF-8"
+charset             = "UTF-8"
 ; Base url
-baseUrl		= "ССЫЛКА_НА_СТРАНИЦУ_ПЛЕЕРА"
-; Count songs per query
-songsCount	= 15
-; Better songs filter (work slow, recommend to "no")
-fair_id		= "no"
+baseUrl             = "http://Your.Open.Player.Url"
+; Results per page
+resultsPerPage      = 15
 ; Suggestion count
-suggestion_count = 5
-; Log songs for suggestion
-logSongs = false
+suggestionCount     = 10
 ; Search history length
-historyLength = 5
+historyLength       = 5
 ; Google analytics id
-GoogleAnalytics = "XX-XXXXXXXX-X"
-; Allow to download tracks
-allow_download = true 
+GoogleAnalytics     = ""
 
 ;default language
 defLang = "ru"
@@ -43,29 +36,53 @@ availableLangs[] = "ua"
 availableLangs[] = "en"
 availableLangs[] = "de"
 
-; sliding playlist
-slidingPlaylist = false
+;SEO catalog size
+catalogSize     = 50
+catalogColumns  = 3
 
-[storage]
-; Directory levels
-dir_lvls	= 0
-; Max size
-max_size    = 200
-
+sape = ''
 
 [vk]
 ; Parser UserAgent (List popular http://www.user-agents.org)
-userAgent   = "Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 ( .NET CLR 3.5.30729)"
+userAgent      = "Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 ( .NET CLR 3.5.30729)"
 ; Vkontakte id
-id[0]          = "АЙДИ_ВКОНТАКТЕ"
+id[0]          = "YourVkontakteID"
 ; Vkontakte email
-login[0]       = "ЕМЕЙЛ_ВКОНТАКТЕ"
+login[0]       = "YourVkontakteEmail"
 ; Vkontakte password
-password[0]    = "ПАРОЛЬ_ВКОНТАКТЕ"
+password[0]    = "YourVkontaktePassword"
 
+; You can set *non limited* multiple VK accounts by adding 
+; id[1], ligin[1], password[1], ... options. 
+; Recommend for high load players
 
 [client] ; js settings
-; Delete songs from server
-deleteSong = true 
 ; Ajax suggest
-suggest = false 
+suggest         = true 
+
+[widgets]
+; Tracks
+socialButtons   = true
+downloadTrack   = true
+directLink      = true
+
+; Search
+lastSearches    = true
+recommendations = false ;false - recommend
+
+; Footer
+languages       = true
+discussLinks    = true
+friends         = true
+donate          = true
+
+; Extra
+slidingPlaylist = false
+showCatalog     = true
+allowEmbed      = true
+
+[cache]
+cacheSearch = true
+cacheSearchTime = 86400 ;seconds (24 hrs) Notice: links can die if time is big, recommend time - less than 24 hrs
+
+cacheSongs = false ; Recommend to false, it does not legal to store music, does not *yet* have memory limit

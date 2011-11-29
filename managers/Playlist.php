@@ -33,13 +33,15 @@ class Playlist extends \Lib\Base\Manager {
         return $res->fetch( \PDO::FETCH_OBJ );
     }
 
-    public function getSongs( $plId ) {
+    public function getSongs( $plId, $userCheck = true ) {
         $plId = intval($plId);
         
-        $user = User::getUser();
-        $userId = intval($user->id);
+        if ( $userCheck ) {
+            $user = User::getUser();
+            $userId = intval($user->id);
+        }
         
-        $q = "SELECT * FROM pl INNER JOIN pl_song pls ON pl.id = pls.plId WHERE pl.userId = {$userId} AND pl.id = {$plId} ORDER BY pls.position";
+        $q = "SELECT * FROM pl INNER JOIN pl_song pls ON pl.id = pls.plId WHERE ". ( $userCheck ? "pl.userId = {$userId} AND " : "" ) ."pl.id = {$plId} ORDER BY pls.position";
 
         $res = $this->pdo->query( $q );
 
@@ -194,16 +196,14 @@ class Playlist extends \Lib\Base\Manager {
         $q = "SELECT * FROM pl_song WHERE songId = {$id}";
         $res = $this->pdo->query($q);
         
-        foreach ( $res->fetchAll( \PDO::FETCH_OBJ ) as $song) {
-            $songInfo = array_merge(
-                unserialize($song->songInfo),
-                $songInfo
-            );
+        foreach ( $res->fetchAll( \PDO::FETCH_OBJ ) as $song ) {
+            $sData = unserialize($song->songInfo);
+            foreach ( $songInfo as $key => $value ) {
+                $sData[$key] = $value;
+            }
             
-            $songInfo = serialize($songInfo);
+            $songInfo = serialize($sData);
             $songInfo = $this->pdo->quote($songInfo);
-            $id = $this->pdo->quote($id);
-//            $songInfo = strip_tags($songInfo);
             
             $q = "UPDATE pl_song SET songInfo = {$songInfo} WHERE songId = {$id}";
             $this->pdo->exec($q);

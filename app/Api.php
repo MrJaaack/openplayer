@@ -8,7 +8,7 @@ use \Lib\Request,
 class Api extends \Lib\Base\App {
 
     public function init() {
-    	if(Request::get('method')) {
+    	if( Request::get('method') ) {
 			switch(Request::get('method')) {
 				case 'ping':
 					echo '{"result":"enabled"}';
@@ -21,7 +21,7 @@ class Api extends \Lib\Base\App {
 					die;
 					break;
 					
-				case 'getsound':
+				case 'getsound': //@todo
 					$url = Request::get('url');
 					
 					$ch = curl_init($url);

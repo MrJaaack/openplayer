@@ -2,7 +2,7 @@
 namespace Lib;
 
 class VkLogin {
-    const COOK_PATH = 'cookie';
+    const COOK_PATH = 'assets/cookie';
 
     public static $rnd = 0;
 
@@ -62,6 +62,7 @@ class VkLogin {
             false, 
             1
         );
+//        error_log($res);
         preg_match( '#remixsid=([0-9a-f]+);#', $res, $tmp );
         
         if ( $tmp[1] == '' ) return false;

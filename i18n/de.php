@@ -64,10 +64,10 @@ return array(
     'Tweet' => 'Twitten',
     'Share on vkontakte' => 'Veröffentliche es im Vkontakte',
     'Share on facebook' => 'Veröffentliche es im Facebook',
-    'ru' => 'Russisch',
-    'ua' => 'Ukrainisch',
-    'en' => 'Englisch',
-    'de' => 'Deutsch',
+    'ru' => 'Русский',
+    'ua' => 'Українська',
+    'en' => 'English',
+    'de' => 'Deutsche',
     'Auth form' => 'Authorisierungsform',
 );
 

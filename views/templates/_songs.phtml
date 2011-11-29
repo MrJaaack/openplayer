@@ -1,5 +1,10 @@
-<?php echo $this->render('history') ?>
-<?php echo $this->render('recommendation') ?>
+<?php if ( op_conf('widgets', 'lastSearches') ):?>
+    <?php echo $this->render('history') ?>
+<?php endif;?>
+
+<?php if ( op_conf('widgets', 'recommendations') ):?>
+    <?php echo $this->render('recommendation') ?>
+<?php endif;?>
 
 <?php if ( !count($this->songs) ): ?>
     <?php echo __('Nothing found') ?>

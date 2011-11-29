@@ -29,6 +29,15 @@ class Stat extends \Lib\Base\Manager {
     		->execute(array($id));
     }
     
+    public function getTopArtists( $limit = 100 ) {
+        //@todo optimize & cache
+        $q = "SELECT SUM(cnt) as cnt, artist FROM stat WHERE artist != '' GROUP BY artist ORDER BY cnt DESC LIMIT {$limit}";
+        $stat = $this->pdo->query($q);
+        
+        return $stat->fetchAll( \PDO::FETCH_OBJ );
+    }
+
+
     public function getRecommendations( $artist ) {
         $artist = strip_tags($artist);
         $artist = $this->pdo->query($artist);

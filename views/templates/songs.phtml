@@ -1,6 +1,6 @@
 <?php $q = \Lib\Request::get('q') ?>
 <?php $offset = \Lib\Request::get('offset') ?>
-<?php $songsCount = \Lib\Config::getInstance()->getOption('app', 'songsCount') ?>
+<?php $songsCount = op_conf('app', 'resultsPerPage') ?>
 
 <?php if ( !\Lib\Request::get('short') ): ?> 
     <div class="op-container-songbox op-container-songs" id="opContainerSongs">

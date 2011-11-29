@@ -137,6 +137,26 @@ var Playlists = {
             }
         });
         
+        // встраивание на сторонние сайты
+        $('.op-link-pl-html').unbind();
+        $('.op-link-pl-html').click(function() {
+            prompt(
+                Lang.__('Embed code:'), 
+                '<iframe src="'+baseUrl+'?app=embed&plId='+$(this).data('id')+'" width="340" height="420" style="border: 1px solid #ccc;"></iframe>'
+            );
+        });
+        // /встраивание на сторонние сайты
+        
+        // встраивание на сторонние сайты
+        $('.op-link-song-html').unbind();
+        $('.op-link-song-html').click(function() {
+            prompt(
+                Lang.__('Embed code:'), 
+                '<iframe src="'+baseUrl+'?app=embed&songs=1&tl='+$(this).data('tl')+'" width="340" height="45" style="border: 1px solid #ccc;overflow:hidden;"></iframe>'
+            );
+        });
+        // /встраивание на сторонние сайты
+        
         $('.op-link-pl-edit').unbind();
         $('.op-link-pl-edit').click(function() {
             var id = $(this).data('id');
@@ -237,60 +257,62 @@ var Playlists = {
             }
         });
         
-        $('.op-container-songbox, #opContainerSongs').sortable({
-            connectWith: ".op-container-songbox",
-            revert: 100,
-            
-            stop: function(event, ui) {
-                var fromId = $(this).parents('.op-playlist').data('id');
-                var song = $(ui.item);
-                
-                var toId = $(ui.item).parents('.op-playlist').data('id');
-                if ( toId ) {
-                    var delLink = $(ui.item).find('.op-song-del-span');
-                    delLink.find('.op-link-song-del').data('plid', toId);
-                    delLink.show();
-                    
-                    Loading.on();
+        if ( $('#opContainerSongs').length ) {
+            $('.op-container-songbox, #opContainerSongs').sortable({
+                connectWith: ".op-container-songbox",
+                revert: 100,
 
-                    var afterId = $(ui.item).prev().data('id');
-                    if (undefined == afterId) {
-                        afterId = null;
+                stop: function(event, ui) {
+                    var fromId = $(this).parents('.op-playlist').data('id');
+                    var song = $(ui.item);
+
+                    var toId = $(ui.item).parents('.op-playlist').data('id');
+                    if ( toId ) {
+                        var delLink = $(ui.item).find('.op-song-del-span');
+                        delLink.find('.op-link-song-del').data('plid', toId);
+                        delLink.show();
+
+                        Loading.on();
+
+                        var afterId = $(ui.item).prev().data('id');
+                        if (undefined == afterId) {
+                            afterId = null;
+                        }
+
+                        $.ajax({
+                            url: './',
+                            data: {
+                                app:        'ajax',
+                                query:      'moveSongToPL',
+                                fromId:     fromId,
+                                toId:       toId,
+                                afterId:    afterId,
+                                songData: {
+                                    id:         song.data('id'),
+                                    plid:       song.data('plid'),
+                                    name:       song.data('name'),
+                                    artist:     song.data('artist'),
+                                    url:        song.data('url'),
+                                    duration:   song.data('duration'),
+                                    position:   song.data('position')
+                                }
+                            },
+                            dataType:   'json',
+                            type:       'post',
+
+                            success: function(data) {
+                                Loading.off();
+    //                            Playlists.reload(); // @todo, make without
+                            }
+                        });
+
+                    } else {
+                        $(this).sortable('cancel');
                     }
 
-                    $.ajax({
-                        url: './',
-                        data: {
-                            app:        'ajax',
-                            query:      'moveSongToPL',
-                            fromId:     fromId,
-                            toId:       toId,
-                            afterId:    afterId,
-                            songData: {
-                                id:         song.data('id'),
-                                plid:       song.data('plid'),
-                                name:       song.data('name'),
-                                artist:     song.data('artist'),
-                                url:        song.data('url'),
-                                duration:   song.data('duration'),
-                                position:   song.data('position')
-                            }
-                        },
-                        dataType:   'json',
-                        type:       'post',
-
-                        success: function(data) {
-                            Loading.off();
-//                            Playlists.reload(); // @todo, make without
-                        }
-                    });
-
-                } else {
-                    $(this).sortable('cancel');
                 }
-                
-            }
-        }).disableSelection();
+            }).disableSelection();
+        }
         
         $('.op-link-song-play').unbind();
         $('.op-link-song-play').click(function() {
@@ -387,7 +409,9 @@ var Playlists = {
         
         var url = "./?app=ajax&query=getSong"
             +"&artist="+$(par).data('uartist')
+//            +"&artist="+$(par).data('artist')
             +"&name="+$(par).data('uname')
+//            +"&name="+$(par).data('name')
             +"&url="+$(par).data('url')
             +"&id="+$(par).data('id');
         

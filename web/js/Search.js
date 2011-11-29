@@ -7,6 +7,8 @@ var Search = {
             var artist = $(this).html();
             $('.op-form-search form input[type=text]').val(artist);
             $('.op-form-search form').submit();
+            
+            return false;
         });
     },
     

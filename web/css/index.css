@@ -8,7 +8,7 @@
 
 .op {
     font-family: Verdana, Arial, Helvetica;
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .op .ui-dialog {
@@ -29,6 +29,26 @@
 
 .op-clear {
     clear: both;
+}
+
+.op-mouse-hidden {
+    display: none;
+}
+
+.op-song {
+    position: relative;
+}
+
+.op-song:hover .op-mouse-hidden {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    
+    background: rgba(255, 255, 255, 0.7);
+    padding: 1px;
+    
+    box-shadow: 0 0 5px #fff;
+    border-radius: 2px;
 }
 
 
@@ -54,6 +74,10 @@
 
 .op-icon-pl-edit {
     background-position: 0px -1px;
+}
+
+.op-icon-pl-embed {
+    background-position: 0 -239px;
 }
 
 .op-icon-song-play {
@@ -84,6 +108,11 @@
     background-position: 0px -188px;
 }
 
+.op-icon-embed {
+    display: inline-block;
+    background-position: 0 -239px;
+}
+
 .op-icon-new {
     padding-left: 15px;
     background-position: 0px -205px;
@@ -91,10 +120,10 @@
 
 .op-icon-download {
     padding-left: 15px;
-    background-position: 0px -222px;
+    background-position: 0px -220px;
 }
 
 .op-icon-pl-download {
     padding-left: 0px;
-    background-position: 0px -222px;
+    background-position: 0px -220px;
 }
