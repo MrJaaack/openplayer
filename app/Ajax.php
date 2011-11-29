@@ -127,27 +127,19 @@ class Ajax extends \Lib\Base\App {
                 echo $this->render('user');
                 die;
                 break;
+            
             case 'getapp':
                 echo $this->render(\Lib\Request::get('getapp', 'about'));
                 die;
                 break;
             
-            case 'deleteSong':
-            	if (\Lib\Config::getInstance()->getOption('client', 'deleteSong')) {
-                    $storage = \Lib\Storage::getInstance();
-                    $path = $storage->makeName(Request::get('id').".mp3"); 
-                    
-                    if ( !$storage->exists( $path ) ) {
-	                    $storage->delete( $path );
-	                }
-            	}
-                die;
-                break;
-			
             case 'dl':
             case 'getSong':
-                $artist = Request::get('artist');
-                $name = Request::get('name');
+                // anti lock
+                session_write_close();//@todo check
+                
+                $artist = urldecode(Request::get('artist'));
+                $name = urldecode(Request::get('name'));
                 
                 # stat
                 if ( $artist ) {
@@ -160,12 +152,47 @@ class Ajax extends \Lib\Base\App {
                 # /stat
 				
                 $id = Request::get('id');
+                
+                header('Last-Modified:');
+                header('ETag:');
+                header('Content-Type: audio/mpeg');
+                header('Accept-Ranges: bytes');
+                
+                # download song
+				if ( 'dl' == Request::get('query') ) {
+                    $fname = Helper::makeValidFname(
+						$artist . ' - ' . $name
+					).'.mp3';
+                    
+                    header("Content-Disposition: attachment; filename=\"{$fname}\"");
+                    header('Content-Description: File Transfer');
+                    header('Content-Transfer-Encoding: binary');
+				}
+                # /download song
+                
+                // cache
+                $cachePath = CACHEROOT . "/mp3_" . $id;
+                if ( \Lib\Config::getInstance()->getOption('cache', 'cacheSongs', false) && file_exists($cachePath) ) {
+                    $song = file_get_contents($cachePath);
+                    $contentLength = strlen($song);
+
+                    header('Content-Length: '.$contentLength);
+                    echo $song;
+                    die;
+                }
+                // /cache
+                
                 $url = Request::get('url');
 
                 $headers = get_headers($url);
                 $status = substr($headers[0], 9, 3);
+                
+                $oldUrl = $url;
                 if ( '404' == $status ) {
-                    $searchSongs = \Lib\AudioParser::search ($artist . ' - ' . $name);
+                    $q = $artist . ' - ' . $name;
+                    
+                    $searchSongs = \Lib\AudioParser::search($q);
+                    
                     foreach ($searchSongs as $value) {
                         if ( $artist == $value['artist'] && $name == $value['name'] ) {
                             $url = $value['url'];
@@ -173,7 +200,7 @@ class Ajax extends \Lib\Base\App {
                         }
                     }
                     
-                    if ( !$url ) {
+                    if ( !$url || $url = $oldUrl ) {
                         $song = reset($searchSongs);
                         $url = $song['url'];
                     }
@@ -187,42 +214,16 @@ class Ajax extends \Lib\Base\App {
                     );
                 }
                 
-                # Suggest stat
-                if ( \Lib\Config::getInstance()->getOption('app', 'logSongs') ) {
-                    $songsManager = new \Manager\Songs;
-
-                    $songsManager->updateSong(
-                        $id, 
-                        array(
-                            'filename' => $path, 
-                            'size' => strlen($song)
-                        )
-                    );
-				
-                    $statManager = new \Manager\Stat; 
-					$statManager->logSong($id);
-                }
-                # /Suggest stat
-				
-                # download song
-				if ( 'dl' == Request::get('query') ) {
-                    $fname = Helper::makeValidFname(
-						$artist . ' - ' . $name
-					).'.mp3';
-                    
-                    header("Content-Disposition: attachment; filename=\"{$fname}\"");
-                    header('Content-Description: File Transfer');
-                    header('Content-Transfer-Encoding: binary');
-				}
-                # /download song
+                
                 
                 $song = file_get_contents($url);
+                
+                if ( \Lib\Config::getInstance()->getOption('cache', 'cacheSongs', false) ) {
+                    file_put_contents($cachePath, $song);
+                }
+                
                 $contentLength = strlen($song);
                 
-                header('Last-Modified:');
-                header('ETag:');
-                header('Content-Type: audio/mpeg');
-                header('Accept-Ranges: bytes');
                 header('Content-Length: '.$contentLength);
                 
                 echo $song;
