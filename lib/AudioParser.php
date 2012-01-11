@@ -18,8 +18,6 @@ class AudioParser {
         }
         
         if ( !$cached || ( $data['meta']['time'] < (time() - $config->getOption('cache', 'cacheSearchTime', 86400)) ) ) {
-            $cookie = VkLogin::getCookie();
-
             $ids = $config->getOption('vk', 'id');
 
             $post = array(
@@ -29,16 +27,16 @@ class AudioParser {
                 'id' => $ids[VkLogin::$rnd],
                 'offset' => $offset,
                 'q' => $query,
-    //            'count' => '5',
                 'sort' => '2'
             );
 
             $answer = Curl::process( 
-                'http://vkontakte.ru/audio',
-                $cookie,
+                'http://vk.com/audio',
                 false,
                 http_build_query($post)
             );
+            
+            Log::log($answer);
             
             self::$html = $answer;
 
@@ -134,7 +132,6 @@ class AudioParser {
 	/* Можно генерировать ссылки виды http://yoursite.ru/?song=41613828_110901414 и гарантировано возращать ту самую песню */
 	public static function searchByID($Linkid) {
         $config = Config::getInstance();
-        $cookie = VkLogin::getCookie();
 		
 		$result = '';
 
@@ -152,7 +149,6 @@ class AudioParser {
 
         $answer = Curl::process(
             'http://vkontakte.ru/audio',
-            $cookie,
             false,
             http_build_query($post)
         );
@@ -191,7 +187,6 @@ class AudioParser {
 	/* Можно генерировать плейлисты */
 	public static function vkUserSongs($Userid) {
         $config = Config::getInstance();
-        $cookie = VkLogin::getCookie();
 		
 		$result = '';
 
@@ -207,7 +202,6 @@ class AudioParser {
 
         $answer = Curl::process(
             'http://vkontakte.ru/audio',
-            $cookie,
             false,
             http_build_query($post)
         );

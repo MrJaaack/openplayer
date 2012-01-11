@@ -2,8 +2,9 @@
 namespace Lib;
 
 class Curl {
-
-    public static function process( $url, $cookie=false, $headers=false, $post=false ) {
+    public static function process( $url, $headers=false, $post=false ) {
+        $cookieFile = VkLogin::COOK_PATH . VkLogin::$rnd;
+        
         $ch = \curl_init($url);
         
         \curl_setopt(
@@ -24,11 +25,8 @@ class Curl {
             0
         );
         
-        \curl_setopt(
-            $ch, 
-            CURLOPT_COOKIE, 
-            $cookie
-        );
+        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
+        curl_setopt($ch, CURLOPT_COOKIEJAR,  $cookieFile);
         
         \curl_setopt(
             $ch, 

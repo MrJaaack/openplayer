@@ -18,29 +18,7 @@ class Config {
     }
     
     private function __construct() {
-        $cachePath = CACHEROOT . "/generated_config.php";
-        
-        if ( file_exists($cachePath) ) {
-            $this->config = require_once $cachePath;
-        } else {
-            $this->config = parse_ini_file(ROOT . '/configs/app.ini', true);
-            // caching
-            $data = print_r($this->config, true);
-            $data = str_replace('[', '"', $data);
-            $data = str_replace(']', '"', $data);
-
-            $data = preg_replace("/=> (.*)\n/", "=> \"$1\",\n", $data);
-
-            $data = str_replace('"Array",', 'array', $data);
-            $data = str_replace(')', '),', $data);
-
-            $len = strlen($data);
-            $data[$len-2] = ";";
-
-            file_put_contents($cachePath, "<?php return " . $data);
-            // /caching
-        }
-        
+        $this->config = parse_ini_file(ROOT . '/configs/app.ini', true);
     }
     private function __clone() {}
     

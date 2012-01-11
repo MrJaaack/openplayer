@@ -2,6 +2,7 @@
 session_start();
 define('ROOT', __DIR__);
 define('CACHEROOT', ROOT . "/assets");
+define('DEBUG', false);
 
 ini_set('display_errors', 'off');
 
@@ -13,24 +14,24 @@ function classLoad( $className ) {
         "Manager" => "managers"
     );
 
-	foreach ( $namespaces as $ns => $path ) {
-		if (( 0 === strpos( $className, "{$ns}\\" ) ) || ( 0 === strpos( $className, "\\{$ns}\\"))) {
-			$pathArr = explode( "\\", $className );
-			if ($pathArr[0] == '') {
-				array_shift($pathArr);
-			}
-			$pathArr[0] = $path;
+    foreach ( $namespaces as $ns => $path ) {
+        if (( 0 === strpos( $className, "{$ns}\\" ) ) || ( 0 === strpos( $className, "\\{$ns}\\"))) {
+            $pathArr = explode( "\\", $className );
 
-			$class = implode( DIRECTORY_SEPARATOR, $pathArr );
+            if ( '' == $pathArr[0] ) {
+                array_shift($pathArr);
+            }
+            $pathArr[0] = $path;
 
-			require_once ROOT . DIRECTORY_SEPARATOR . "{$class}.php";
-		}
-	}
+            $class = implode( DIRECTORY_SEPARATOR, $pathArr );
+
+            require_once ROOT . DIRECTORY_SEPARATOR . "{$class}.php";
+        }
+    }
 }
 
 spl_autoload_register("classLoad");
 # /autoload
-
 
 # i18n
 Lib\Lang::init();
@@ -48,7 +49,15 @@ $app = strtolower( Lib\Request::get('app', 'index') );
 
 require_once ROOT . '/lib/helpers.php';
 
+// check if we logged in
+Lib\VkLogin::checkLogin();
+
 $appClass = "App\\".ucfirst($app);
 $appObj = new $appClass;
 $appObj->run( $app );
 # /app init
+
+if ( DEBUG ) {
+    $path = ROOT . "/assets/process.log";
+    file_put_contents($path, Lib\Log::$log);
+}
