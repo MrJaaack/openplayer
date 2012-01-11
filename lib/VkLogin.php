@@ -12,11 +12,9 @@ class VkLogin {
 
         $lockFile = ROOT . '/assets/login.lock';
         if ( !file_exists( $lockFile ) ) {
-            $cookie = self::login();
+            self::login();
             file_put_contents($lockFile, '');
         }
-        
-        return $cookie;
     }
 
     private static function login() {
