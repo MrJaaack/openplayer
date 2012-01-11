@@ -17,8 +17,8 @@
         <script type="text/javascript" src="./web/js/Playlists.js"></script>
         <script type="text/javascript" src="./web/js/Base.js"></script>
         
-        <link href="./web/css/index.css" rel="stylesheet" media="all" />
-        <link href="./web/css/design.css" rel="stylesheet" media="all" />
+        <link href="./web/css/index.css?v2" rel="stylesheet" media="all" />
+        <link href="./web/css/design.css?v2" rel="stylesheet" media="all" />
         <link href="./web/css/jquery-ui.custom.css" rel="stylesheet" media="all" />
         
         <link rel="icon" type="image/png" href="./web/img/icon.png" />
@@ -44,18 +44,6 @@
             var baseUrl = '<?php echo op_conf('app', 'baseUrl') ?>';
         </script>
         
-        <?php 
-        if ( $sape = op_conf('app', 'sape') ) {
-             if ( !defined('_SAPE_USER') ) {
-                define('_SAPE_USER', $sape); 
-             }
-             
-             require_once($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'); 
-             
-             $sape = new SAPE_client();
-        }
-        ?>
-        
         <?php echo $this->content ?>
         
         <?php if ( op_conf('app', 'GoogleAnalytics') ): ?>
@@ -72,7 +60,5 @@
 
             </script>
         <?php endif ?>
-        
-        <!-- Open Player v0.23 --> 
     </body>
 </html>
