@@ -21,31 +21,3 @@ function op_conf($section, $key, $default = null) {
         $section, $key, $default
     );
 }
-
-// Global class
-class G {
-    public static $sape = null;
-}
-
-function op_sape( $n = null, $offset = 0, $options = null ) {
-    if ( $sapeUser = \Lib\Config::getInstance()->getOption('app', 'sape') ) {
-        if ( null == G::$sape ) {
-            if ( !defined('_SAPE_USER') ) {
-                define('_SAPE_USER', $sapeUser);
-            }
-
-            $sapeFile = $_SERVER['DOCUMENT_ROOT'] . '/' . _SAPE_USER . '/sape.php';
-            
-            if ( !file_exists($sapeFile) ) {
-                return null;
-            }
-            
-            require_once( $sapeFile );
-            G::$sape = new SAPE_client();
-        }
-
-        return G::$sape->return_links( $n, $offset, $options );
-    }
-    
-    return null;
-}
