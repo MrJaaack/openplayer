@@ -10,7 +10,7 @@ class VkLogin {
         $ids = Config::getInstance()->getOption( 'vk', 'id' );
         VkLogin::$rnd = rand( 0, count($ids) - 1 );
 
-        $lockFile = ROOT . '/assets/login.lock';
+        $lockFile = ROOT . '/assets/login.lock_' . VkLogin::$rnd;
         if ( !file_exists( $lockFile ) ) {
             self::login();
             file_put_contents($lockFile, '');
