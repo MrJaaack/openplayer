@@ -22,6 +22,7 @@ class Songs extends \Lib\Base\App {
             $ids = Config::getInstance()->getOption( 'vk', 'id' );
             foreach ($ids as $key => $value) {
                 unlink( \Lib\VkLogin::COOK_PATH . $key );
+                unlink( ROOT . '/assets/login.lock_' . $key );
             }
 
             $url = Request::getAllGet();
