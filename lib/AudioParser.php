@@ -10,9 +10,10 @@ class AudioParser {
         $player = OpenPlayerWrapper::getInstance()->getPlayer();
         
         $count = $config->getOption('app', 'resultsPerPage');
+        $page = ($offset / $count);
         
         $result = $player->audioSearch(
-            $query, ($offset / $count), $count, 60*60*24
+            $query, $page*$count, $count, 60*60*24
         );
         
         $songs = array();
