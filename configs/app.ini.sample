@@ -45,8 +45,9 @@ sape = ''
 [vk]
 ; Parser UserAgent (List popular http://www.user-agents.org)
 userAgent      = "Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 ( .NET CLR 3.5.30729)"
-; Vkontakte id
-id[0]          = "YourVkontakteID"
+; You need to create Standalone-application (http://vk.com/apps.php?act=add)
+appId= 2802695
+
 ; Vkontakte email
 login[0]       = "YourVkontakteEmail"
 ; Vkontakte password
