@@ -7,122 +7,30 @@ class AudioParser {
 
     public static function search($query, $offset = 0) {
         $config = Config::getInstance();
-        $cacheEnabled = $config->getOption('cache', 'cacheSearch', false);
-        $cachePath = CACHEROOT . "/" . sha1($query . $offset);
+        $player = OpenPlayerWrapper::getInstance()->getPlayer();
         
-        $cached = false;
-        if ( $cacheEnabled && file_exists($cachePath) ) {
-            $cached = true;
-            $data = unserialize(file_get_contents($cachePath));
-            $songs = $data['data'];
-        }
+        $count = $config->getOption('app', 'resultsPerPage');
         
-        if ( !$cached || ( $data['meta']['time'] < (time() - $config->getOption('cache', 'cacheSearchTime', 86400)) ) ) {
-            $ids = $config->getOption('vk', 'id');
-
-            $post = array(
-                'act' => 'search',
-                'al' => '1',
-                'gid' => '0',
-                'id' => $ids[VkLogin::$rnd],
-                'offset' => $offset,
-                'q' => $query,
-                'sort' => '2'
+        $result = $player->audioSearch(
+            $query, ($offset / $count), $count, 60*60*24
+        );
+        
+        $songs = array();
+        foreach ( $result['result'] as $audioItem ) {
+            $songname = "{$audioItem['artist']}-{$audioItem['title']}";
+            $songId = md5($songname.$audioItem['duration'].uniqid());
+            
+            $mins = floor($audioItem['duration'] / 60);
+            $seconds = $audioItem['duration'] - ($mins * 60);
+            
+            $songs[$songId] = array(
+                'duration'  => "{$mins}:{$seconds}",
+                'url'       => $audioItem['url'],
+                'artist'    => $audioItem['artist'],
+                'name'      => $audioItem['title'],
+                'vkid'      => "{$audioItem['owner_id']}_{$audioItem['aid']}",
+                'id'        => $songId
             );
-
-            $answer = Curl::process( 
-                'http://vk.com/audio',
-                false,
-                http_build_query($post)
-            );
-            
-            Log::log($answer);
-            
-            self::$html = $answer;
-
-            $matches = explode(
-                '<div class="fl_l" style="width:31px;height:21px;">', 
-                $answer
-            );
-            
-            $songs = array();
-            foreach ($matches as $audioItem) {
-                preg_match_all(
-                    '/<div class="duration fl_r".+?>(.*)<\/div>/', 
-                    $audioItem, 
-                    $res
-                );
-
-                if ( ! isset( $res[1][0] ) ) continue;
-
-                $song['duration'] = $res[1][0];
-                
-                preg_match_all(
-                    '<input type="hidden" id=".*?" value="(.*)?" />', 
-                    $audioItem, 
-                    $res
-                );
-
-                $songName = explode( ',', $res[1][0] );
-
-                $song['url'] = $songName[0];
-
-                preg_match_all(
-                    '/<div class="title_wrap">(.*)?<\/div>/', 
-                    $audioItem, 
-                    $res
-                );
-
-                $songname = preg_replace(
-                    '/\(.*\)/', 
-                    '', 
-                    strip_tags($res[1][0])
-                );
-
-                $songname = mb_convert_encoding(
-                    $songname, 
-                    $config->getOption('app', 'charset'), 
-                    'Windows-1251'
-                );
-
-                $s = mb_convert_encoding(
-                    $res[1][0], 
-                    Config::getInstance()->getOption('app', 'charset'), 
-                    'Windows-1251'
-                );
-
-                if (preg_match('#<b>(.+?)</b>#', $s, $artist)) {
-                    $song['artist'] = strip_tags(trim($artist[1]));
-                }
-                if (preg_match('#<span class="title">(.+?)<span class="user">#', $s, $name)) {
-                    $song['name'] = strip_tags(trim($name[1]));
-                }
-
-                preg_match_all( // Ищет id вида 41613828_110901414
-                    '/<div class="repeat_wrap">(.*)?<\/div>/',
-                    $audioItem,
-                    $res2
-                );
-
-                if (preg_match('#id="repeat(.+?)"#', $res2[1][0], $play_id)) { // Записывает id вида 41613828_110901414
-                    $song['vkid'] = $play_id[1];
-                }
-
-                $song['id'] = md5($songname.$song['duration']);
-
-                $songs[$song['id']] = $song;
-            }
-            
-            if ( $cacheEnabled ) {
-                $data = array(
-                    'meta' => array(
-                        'time' => time()
-                    ),
-                    'data' => $songs
-                );
-
-                file_put_contents( $cachePath, serialize($data) );
-            }
         }
         
         return $songs;
