@@ -112,7 +112,7 @@ class Core {
                 curl_setopt($ch3, CURLOPT_URL, $href);
                 $responce = $this->curl_redirect_exec($ch3);
                 curl_close($ch3);
-                $token = $this->getTokenM();
+                $token = $this->getToken();
             } else {
                 $token = Cache::get('access_token', 60 * 60);
                 Cache::clear('access_token');
