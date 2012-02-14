@@ -31,18 +31,18 @@ class VkLogin {
                 urlencode($email[ self::$rnd ]) . '&pass=' . 
                 urlencode($pass[ self::$rnd ]) . '&expire='
         );
-        
-        preg_match(
-            '#hash=([0-9a-f]+)#', 
-            $res, 
-            $tmp
-        );
-        $hash = $tmp[1];
+//        die;
+//        preg_match(
+//            '#hash=([0-9a-f]+)#', 
+//            $res, 
+//            $tmp
+//        );
+//        $hash = $tmp[1];
 
-        $res = Curl::process(
-            "http://vk.com/login.php?act=slogin&fast=1&hash={$hash}&s=1", 
-            1
-        );
+//        $res = Curl::process(
+//            "http://vk.com/login.php?act=slogin&fast=1&hash={$hash}&s=1", 
+//            1
+//        );
     }
 
 }
